@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Magic 8 Ball App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Home Screen -->
+  <div id="homeScreen" class="fullscreen">
+    <img src="images/home-screen.png" alt="Home Screen" class="home-image">
+    <button id="startButton">Start</button>
+  </div>
+
+  <!-- Intro Video -->
+  <div id="introVideoContainer" class="fullscreen hidden">
+    <video id="introVideo" autoplay muted>
+      <source src="images/intro-video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- Main App -->
+  <div id="mainApp" class="hidden">
+    <video class="bg-video" autoplay muted loop>
+      <source src="images/live-space-bg.mp4" type="video/mp4">
+    </video>
+
+    <div class="container">
+      <div class="question-container">
+        <input type="text" id="question" placeholder="Type your question here...">
+        <button id="askButton">Ask</button>
+      </div>
+
+      <div class="ball-container">
+        <div class="shake-wrapper">
+          <div class="ball-wrapper">
+            <img src="images/gloves.png" alt="Magic 8 Ball with Gloves" class="ball-image">
+            <div class="answer-overlay" id="answer">Ask me anything...</div>
+          </div>
+        </div>
+      </div>      
+    </div>
+
+    <audio id="magicSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6e6e1c9276.mp3?filename=game-notification-132514.mp3"></audio>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
