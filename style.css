@@ -30,25 +30,6 @@ body {
   display: none;
 }
 
-#specialVideoContainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#specialVideoContainer video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .home-image {
   position: absolute;
   width: 100%;
@@ -60,7 +41,7 @@ body {
 /* Center the start button over the ball */
 #startButton {
   position: absolute;
-  top: 45.5%; /* Adjust this to center it in the ball */
+  top: 45.5%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 28px;
