@@ -36,7 +36,7 @@ const answers = [
   "Ask your mom",
   "Go touch grass",
   "LMAO no",
-  "Fuck. Nah.",
+  "Nope. Not today.",
   "My sources say 'oof'",
 ];
 
@@ -46,11 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const askButton = document.getElementById('askButton');
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
-
-  if (["is curtis gay", "is curtis gay?"].includes(userQuestion)) {
-  window.open("https://youtube.com/shorts/6xed7PDbGKI?feature=share", "_blank");
-  return;
-  }
 
   function isYesNoQuestion(text) {
     const trimmed = text.trim().toLowerCase();
@@ -66,31 +61,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let userQuestion = questionInput.textContent.trim();
 
-    if (["is curtis gay", "is curtis gay?"].includes(userQuestion)) {
-  window.open("https://youtube.com/shorts/6xed7PDbGKI?feature=share", "_blank");
-  return;
-  }
-    
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
       answerEl.classList.add('show');
       return;
     }
 
-    userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
+    // Normalize question for logic
+    const cleanedQuestion = userQuestion.toLowerCase().replace(/\?$/, '').trim();
 
-    if (!isYesNoQuestion(userQuestion)) {
-      answerEl.textContent = "Try a yes or no question!";
-      answerEl.classList.add('show');
+    // === CURTIS VIDEO TRIGGER ===
+    if (cleanedQuestion === "is curtis gay") {
+      window.open("https://youtube.com/shorts/6xed7PDbGKI?feature=share", "_blank");
       return;
     }
 
-    if (userQuestion === lastQuestion) {
+    // Prevent same question
+    if (cleanedQuestion === lastQuestion) {
       answerEl.textContent = "You already asked that!";
       answerEl.classList.add('show');
       return;
     }
 
+    // Validate yes/no style
+    if (!isYesNoQuestion(cleanedQuestion)) {
+      answerEl.textContent = "Try a yes or no question!";
+      answerEl.classList.add('show');
+      return;
+    }
+
+    // Shake and show new answer
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth;
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const randomIndex = Math.floor(Math.random() * answers.length);
       const newAnswer = answers[randomIndex];
       answerEl.textContent = newAnswer;
-      lastQuestion = userQuestion;
+      lastQuestion = cleanedQuestion;
 
       const utterance = new SpeechSynthesisUtterance(newAnswer);
       utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sound.play().catch(e => console.error("Audio playback failed:", e));
 
       answerEl.classList.add('show');
-
       shakeWrapper.classList.remove('shake');
     }, 800);
   };
