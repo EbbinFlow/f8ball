@@ -11,6 +11,7 @@ body {
   overflow: hidden;
 }
 
+/* ==== Home Screen Styling ==== */
 .fullscreen {
   position: fixed;
   top: 0;
@@ -37,6 +38,7 @@ body {
   z-index: 0;
 }
 
+/* Center the start button over the ball */
 #startButton {
   position: absolute;
   top: 45.5%;
@@ -56,12 +58,14 @@ body {
   text-shadow: 0 0 15px cyan, 0 0 30px cyan;
 }
 
+/* ==== Intro Video ==== */
 #introVideo {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
 }
 
+/* ==== Background Video ==== */
 .bg-video {
   position: fixed;
   top: 0;
@@ -73,6 +77,7 @@ body {
   pointer-events: none;
 }
 
+/* ==== Main App Container ==== */
 .container {
   position: relative;
   height: 100vh;
@@ -83,6 +88,7 @@ body {
   z-index: 2;
 }
 
+/* ==== Question Input & Ask Button ==== */
 .question-container {
   position: absolute;
   top: 13%;
@@ -179,6 +185,30 @@ body {
   opacity: 1;
 }
 
+/* ==== Curtis Button ==== */
+#curtisButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: rgba(0, 255, 255, 0.2);
+  border: 2px solid cyan;
+  color: cyan;
+  text-shadow: 0 0 6px cyan;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease-in-out;
+}
+
+#curtisButton:hover {
+  background-color: rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 10px cyan, 0 0 20px cyan;
+}
+
+/* ==== Shake Animation ==== */
 @keyframes shake {
   0% { transform: scale(2) translateX(0); }
   20% { transform: scale(2) translateX(-10px); }
@@ -188,28 +218,7 @@ body {
   100% { transform: scale(2) translateX(0); }
 }
 
-/* ==== Top-Right Link Button ==== */
-.top-right-button {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 9999;
-  background-color: rgba(0, 255, 255, 0.2);
-  border: 2px solid cyan;
-  padding: 8px 16px;
-  border-radius: 10px;
-  color: cyan;
-  font-size: 16px;
-  text-decoration: none;
-  font-weight: bold;
-  text-shadow: 0 0 5px cyan;
-}
-
-.top-right-button:hover {
-  background-color: rgba(0, 255, 255, 0.4);
-  text-shadow: 0 0 10px cyan;
-}
-
+/* ==== Responsive Design ==== */
 @media (max-width: 600px) {
   .question-container {
     top: 10%;
@@ -226,8 +235,10 @@ body {
     padding: 12px 24px;
   }
 
-  .top-right-button {
+  #curtisButton {
     font-size: 14px;
-    padding: 6px 12px;
+    padding: 8px 14px;
+    top: 8px;
+    right: 8px;
   }
 }
