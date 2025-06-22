@@ -67,30 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Normalize question for logic
     const cleanedQuestion = userQuestion.toLowerCase().replace(/\?$/, '').trim();
 
-    // === CURTIS VIDEO TRIGGER ===
-    if (cleanedQuestion === "is curtis gay") {
-      window.open("https://youtube.com/shorts/6xed7PDbGKI?feature=share", "_blank");
-      return;
-    }
-
-    // Prevent same question
     if (cleanedQuestion === lastQuestion) {
       answerEl.textContent = "You already asked that!";
       answerEl.classList.add('show');
       return;
     }
 
-    // Validate yes/no style
     if (!isYesNoQuestion(cleanedQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
       answerEl.classList.add('show');
       return;
     }
 
-    // Shake and show new answer
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth;
