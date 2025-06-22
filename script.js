@@ -69,21 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
-    // Trigger a special video for a specific question
-    if (userQuestion === "will the universe end") {
-      mainApp.classList.add('hidden');
-      const specialVideoContainer = document.getElementById('specialVideoContainer');
-      const specialVideo = document.getElementById('specialVideo');
-      specialVideoContainer.classList.remove('hidden');
-      specialVideo.play();
-
-      specialVideo.onended = () => {
-        specialVideoContainer.classList.add('hidden');
-        mainApp.classList.remove('hidden');
-      };
-      return;
-    }
-
     if (!isYesNoQuestion(userQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
       answerEl.classList.add('show');
@@ -98,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
-    void shakeWrapper.offsetWidth; // Force reflow to restart animation
+    void shakeWrapper.offsetWidth;
     shakeWrapper.classList.add('shake');
 
     setTimeout(() => {
@@ -129,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Prevent mobile zoom staying after input loses focus
   questionInput.addEventListener('blur', () => {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
