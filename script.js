@@ -61,32 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let userQuestion = questionInput.textContent.trim();
 
-if (userQuestion === '') {
-  answerEl.textContent = "Ask a question first!";
-  answerEl.classList.add('show');
-  return;
-}
-
-userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
-
-if (!isYesNoQuestion(userQuestion)) {
-  answerEl.textContent = "Try a yes or no question!";
-  answerEl.classList.add('show');
-  return;
-}
-
-if (userQuestion === lastQuestion) {
-  answerEl.textContent = "You already asked that!";
-  answerEl.classList.add('show');
-  return;
-}
-
-
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
       answerEl.classList.add('show');
       return;
     }
+
+    userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
     if (!isYesNoQuestion(userQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
@@ -94,6 +75,13 @@ if (userQuestion === lastQuestion) {
       return;
     }
 
+    if (userQuestion === lastQuestion) {
+      answerEl.textContent = "You already asked that!";
+      answerEl.classList.add('show');
+      return;
+    }
+
+    // It's a new, valid question
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth; // Force reflow to restart animation
@@ -103,7 +91,7 @@ if (userQuestion === lastQuestion) {
       const randomIndex = Math.floor(Math.random() * answers.length);
       const newAnswer = answers[randomIndex];
       answerEl.textContent = newAnswer;
-      lastQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
+      lastQuestion = userQuestion;
 
       const utterance = new SpeechSynthesisUtterance(newAnswer);
       utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
@@ -118,35 +106,18 @@ if (userQuestion === lastQuestion) {
     }, 800);
   };
 
-questionInput.addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    shakeBall();
-  }
-});
-  
+  askButton.addEventListener('click', shakeBall);
+
+  questionInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      shakeBall();
+    }
+  });
+
   // Prevent mobile zoom staying after input loses focus
-questionInput.addEventListener('blur', () => {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
+  questionInput.addEventListener('blur', () => {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  });
 });
-
-});
-
-
-// Function to dynamically center the answer inside the ball
-/*
-function centerAnswerOverlay() {
-  const img = document.querySelector('.ball-image');
-  const answer = document.getElementById('answer');
-
-  if (!img || !answer) return;
-
-  const rect = img.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-
-  answer.style.left = `${centerX -20}px`;
-  answer.style.top = `${centerY + 100}px`;
-}
-*/
