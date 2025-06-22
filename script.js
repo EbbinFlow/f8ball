@@ -47,12 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
 
-  function normalize(text) {
-    return text.replace(/\s+/g, ' ').trim().toLowerCase();
-  }
-
   function isYesNoQuestion(text) {
-    const trimmed = normalize(text);
+    const trimmed = text.trim().toLowerCase();
     const yesNoStarters = [
       'is', 'are', 'can', 'will', 'should', 'do', 'does',
       'did', 'would', 'could', 'have', 'has', 'am'
@@ -63,14 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
-    let rawQuestion = questionInput.textContent;
-    let userQuestion = normalize(rawQuestion);
+    let userQuestion = questionInput.textContent.trim();
 
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
       answerEl.classList.add('show');
       return;
     }
+
+    userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
     if (!isYesNoQuestion(userQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
@@ -84,17 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Save for next comparison
-    lastQuestion = userQuestion;
-
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
-    void shakeWrapper.offsetWidth;
+    void shakeWrapper.offsetWidth; // Force reflow to restart animation
     shakeWrapper.classList.add('shake');
 
     setTimeout(() => {
-      const newAnswer = answers[Math.floor(Math.random() * answers.length)];
+      const randomIndex = Math.floor(Math.random() * answers.length);
+      const newAnswer = answers[randomIndex];
       answerEl.textContent = newAnswer;
+      lastQuestion = userQuestion;
 
       const utterance = new SpeechSynthesisUtterance(newAnswer);
       utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
@@ -108,7 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 800);
   };
 
-  askButton.addEventListener('click', shakeBall);
+  askButton.addEventListener('click', () => {
+    questionInput.blur(); // ✅ Fix for mobile tap
+    shakeBall();
+  });
 
   questionInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
@@ -117,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Prevent mobile zoom staying after input loses focus
   questionInput.addEventListener('blur', () => {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
