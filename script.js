@@ -99,6 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
   questionInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') shakeBall();
   });
+  // Prevent mobile zoom staying after input loses focus
+questionInput.addEventListener('blur', () => {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+});
+
 });
 
 
