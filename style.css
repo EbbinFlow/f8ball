@@ -186,3 +186,20 @@ body {
   80% { transform: scale(2) translateX(8px); }
   100% { transform: scale(2) translateX(0); }
 }
+
+@media (max-width: 600px) {
+  .question-container {
+    top: 10%;
+  }
+
+  #question {
+    width: 90vw;
+    font-size: 20px;
+    padding: 18px 24px;
+  }
+
+  #askButton {
+    font-size: 18px;
+    padding: 14px 28px;
+  }
+}
