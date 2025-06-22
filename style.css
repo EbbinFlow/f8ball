@@ -115,14 +115,9 @@ body {
 }
 
 #askButton {
-  padding: 10px 25px;
-  border-radius: 8px;
-  border: 2px solid #0ff;
-  background-color: #0ff;
-  color: #000;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
+  padding: 15px 30px;
+  font-size: 20px;
+  border-radius: 10px;
 }
 
 /* ==== Ball and Gloves Styling ==== */
