@@ -59,12 +59,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
-    const userQuestion = questionInput.textContent.trim();
-   if (userQuestion.replace(/\s+/g, ' ').trim().toLowerCase() === lastQuestion) {
-      answerEl.textContent = "Ask something new!";
-      answerEl.classList.add('show');
-      return;
-    }
+    let userQuestion = questionInput.textContent.trim();
+
+if (userQuestion === '') {
+  answerEl.textContent = "Ask a question first!";
+  answerEl.classList.add('show');
+  return;
+}
+
+userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
+
+if (!isYesNoQuestion(userQuestion)) {
+  answerEl.textContent = "Try a yes or no question!";
+  answerEl.classList.add('show');
+  return;
+}
+
+if (userQuestion === lastQuestion) {
+  answerEl.textContent = "You already asked that!";
+  answerEl.classList.add('show');
+  return;
+}
 
 
     if (userQuestion === '') {
