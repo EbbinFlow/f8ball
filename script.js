@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const questionInput = document.getElementById('question');
   const askButton = document.getElementById('askButton');
   const sound = document.getElementById('magicSound');
+  let lastQuestion = "";
 
   function isYesNoQuestion(text) {
     const trimmed = text.trim().toLowerCase();
@@ -59,6 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     const userQuestion = questionInput.textContent.trim();
+    if (userQuestion === lastQuestion) {
+      answerEl.textContent = "Ask something new!";
+      answerEl.classList.add('show');
+      return;
+    }
+
 
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
@@ -81,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const randomIndex = Math.floor(Math.random() * answers.length);
       const newAnswer = answers[randomIndex];
       answerEl.textContent = newAnswer;
+      lastQuestion = userQuestion;
 
       const utterance = new SpeechSynthesisUtterance(newAnswer);
       utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
