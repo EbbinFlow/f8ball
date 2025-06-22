@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
-    const userQuestion = questionInput.value.trim();
+    const userQuestion = questionInput.textContent.trim();
 
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
