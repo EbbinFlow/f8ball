@@ -69,6 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
+    // Trigger a special video for a specific question
+    if (userQuestion === "will the universe end") {
+      mainApp.classList.add('hidden');
+      const specialVideoContainer = document.getElementById('specialVideoContainer');
+      const specialVideo = document.getElementById('specialVideo');
+      specialVideoContainer.classList.remove('hidden');
+      specialVideo.play();
+
+      specialVideo.onended = () => {
+        specialVideoContainer.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+      };
+      return;
+    }
+
     if (!isYesNoQuestion(userQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
       answerEl.classList.add('show');
@@ -100,14 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
       sound.play().catch(e => console.error("Audio playback failed:", e));
 
       answerEl.classList.add('show');
+
       shakeWrapper.classList.remove('shake');
     }, 800);
   };
 
-  askButton.addEventListener('click', () => {
-    questionInput.blur(); // ✅ Fix for mobile tap
-    shakeBall();
-  });
+  askButton.addEventListener('click', shakeBall);
 
   questionInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
