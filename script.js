@@ -47,6 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
 
+  if (["is curtis gay", "is curtis gay?"].includes(userQuestion)) {
+  window.open("https://youtube.com/shorts/6xed7PDbGKI?feature=share", "_blank");
+  return;
+  }
+
   function isYesNoQuestion(text) {
     const trimmed = text.trim().toLowerCase();
     const yesNoStarters = [
@@ -61,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let userQuestion = questionInput.textContent.trim();
 
+    if (["is curtis gay", "is curtis gay?"].includes(userQuestion)) {
+  window.open("https://youtube.com/shorts/6xed7PDbGKI?feature=share", "_blank");
+  return;
+  }
+    
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
       answerEl.classList.add('show');
