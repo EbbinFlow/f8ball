@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     const userQuestion = questionInput.textContent.trim();
-    if (userQuestion === lastQuestion) {
+   if (userQuestion.replace(/\s+/g, ' ').trim().toLowerCase() === lastQuestion) {
       answerEl.textContent = "Ask something new!";
       answerEl.classList.add('show');
       return;
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const randomIndex = Math.floor(Math.random() * answers.length);
       const newAnswer = answers[randomIndex];
       answerEl.textContent = newAnswer;
-      lastQuestion = userQuestion;
+      lastQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
       const utterance = new SpeechSynthesisUtterance(newAnswer);
       utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
