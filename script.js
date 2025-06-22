@@ -47,8 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
 
+  function normalize(text) {
+    return text.replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
   function isYesNoQuestion(text) {
-    const trimmed = text.trim().toLowerCase();
+    const trimmed = normalize(text);
     const yesNoStarters = [
       'is', 'are', 'can', 'will', 'should', 'do', 'does',
       'did', 'would', 'could', 'have', 'has', 'am'
@@ -59,15 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
-    let userQuestion = questionInput.textContent.trim();
+    let rawQuestion = questionInput.textContent;
+    let userQuestion = normalize(rawQuestion);
 
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
       answerEl.classList.add('show');
       return;
     }
-
-    userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
     if (!isYesNoQuestion(userQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
@@ -81,17 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // It's a new, valid question
+    // Save for next comparison
+    lastQuestion = userQuestion;
+
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
-    void shakeWrapper.offsetWidth; // Force reflow to restart animation
+    void shakeWrapper.offsetWidth;
     shakeWrapper.classList.add('shake');
 
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * answers.length);
-      const newAnswer = answers[randomIndex];
+      const newAnswer = answers[Math.floor(Math.random() * answers.length)];
       answerEl.textContent = newAnswer;
-      lastQuestion = userQuestion;
 
       const utterance = new SpeechSynthesisUtterance(newAnswer);
       utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
@@ -101,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sound.play().catch(e => console.error("Audio playback failed:", e));
 
       answerEl.classList.add('show');
-
       shakeWrapper.classList.remove('shake');
     }, 800);
   };
@@ -115,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Prevent mobile zoom staying after input loses focus
   questionInput.addEventListener('blur', () => {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
