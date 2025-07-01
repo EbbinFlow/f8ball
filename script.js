@@ -64,23 +64,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shakeBall = () => {
   const shakeWrapper = document.querySelector('.shake-wrapper');
-  let userQuestion = questionInput.textContent.trim();
+  let rawInput = questionInput.textContent || "";
+  let cleanedQuestion = rawInput.replace(/\s+/g, ' ').trim().toLowerCase();
 
-  if (userQuestion === '') {
+  // Define special questions
+  const specialQuestions = [
+    "what is the meaning of life?",
+    "what is the meaning of the universe?"
+  ];
+
+  // Check for empty input
+  if (cleanedQuestion === '') {
     answerEl.textContent = "Ask a question first!";
     answerEl.classList.add('show');
     return;
   }
 
-  userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
-
-  if (!isYesNoQuestion(userQuestion) && !isSpecialQuestion(userQuestion)) {
+  // Check if it's not yes/no and not a special question
+  if (!isYesNoQuestion(cleanedQuestion) && !specialQuestions.includes(cleanedQuestion)) {
     answerEl.textContent = "Try a yes or no question!";
     answerEl.classList.add('show');
     return;
   }
 
-  if (userQuestion === lastQuestion) {
+  // Check for repeated question
+  if (cleanedQuestion === lastQuestion) {
     answerEl.textContent = "You already asked that!";
     answerEl.classList.add('show');
     return;
@@ -94,11 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     let newAnswer;
 
-    // Check for special questions
-    if (
-      userQuestion === "what is the meaning of life?" ||
-      userQuestion === "what is the meaning of the universe?"
-    ) {
+    // Handle special questions
+    if (specialQuestions.includes(cleanedQuestion)) {
       newAnswer = "42";
     } else {
       const randomIndex = Math.floor(Math.random() * answers.length);
@@ -106,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     answerEl.textContent = newAnswer;
-    lastQuestion = userQuestion;
+    lastQuestion = cleanedQuestion;
 
     const utterance = new SpeechSynthesisUtterance(newAnswer);
     utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
