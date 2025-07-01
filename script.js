@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .trim()
       .toLowerCase();
 
-    const specialQuestions = [
+       const specialQuestions = [
       "what is the meaning of life",
       "what is the meaning of the universe",
       "whats the answer to everything",
