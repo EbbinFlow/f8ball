@@ -60,19 +60,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let rawInput = questionInput.textContent || "";
-    let userQuestion = rawInput.replace(/\s+/g, ' ').trim().toLowerCase();
+    let userQuestion = rawInput
+  .replace(/[’‘]/g, "'")         // Normalize curly apostrophes
+  .replace(/[^\w\s']/g, '')      // Remove punctuation except apostrophes
+  .replace(/\s+/g, ' ')          // Collapse spaces
+  .trim()
+  .toLowerCase();
+
 
     const specialQuestions = [
-      "what is the meaning of life?",
-      "what is the meaning of the universe?",
-      "what's the answer to everything?",
-      "what is the ultimate answer?",
-      "why are we here?",
-      "what is the purpose of existence?",
-      "what is the answer to life, the universe, and everything?",
-      "what is the meaning of it all?",
-      "is there a purpose to life?"
-    ];
+  "what is the meaning of life",
+  "what is the meaning of the universe",
+  "whats the answer to everything",
+  "what is the ultimate answer",
+  "why are we here",
+  "what is the purpose of existence",
+  "what is the answer to life the universe and everything",
+  "what is the meaning of it all",
+  "is there a purpose to life"
+];
+
 
     if (userQuestion === '') {
       answerEl.textContent = "Ask a question first!";
