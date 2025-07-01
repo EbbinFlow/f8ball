@@ -47,15 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
 
-  function isYesNoQuestion(text) {
-    const trimmed = text.trim().toLowerCase();
-    const yesNoStarters = [
-      'is', 'are', 'can', 'will', 'should', 'do', 'does',
-      'did', 'would', 'could', 'have', 'has', 'am'
-    ];
-    const firstWord = trimmed.split(/\s+/)[0];
-    return yesNoStarters.includes(firstWord);
-  }
+ function isYesNoQuestion(cleanedText) {
+  const firstWord = cleanedText.split(' ')[0];
+  const yesNoStarters = [
+    'is', 'are', 'can', 'will', 'should', 'do', 'does',
+    'did', 'would', 'could', 'have', 'has', 'am'
+  ];
+  return yesNoStarters.includes(firstWord);
+}
+
 
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
