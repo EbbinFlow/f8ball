@@ -47,11 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
 
-  function isSpecialQuestion(text) {
-  const cleaned = text.trim().toLowerCase();
-  return cleaned === "what is the meaning of life?" || cleaned === "what is the meaning of the universe?";
-  }
-
   function isYesNoQuestion(text) {
     const trimmed = text.trim().toLowerCase();
     const yesNoStarters = [
@@ -63,67 +58,69 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const shakeBall = () => {
-  const shakeWrapper = document.querySelector('.shake-wrapper');
-  let rawInput = questionInput.textContent || "";
-  let cleanedQuestion = rawInput.replace(/\s+/g, ' ').trim().toLowerCase();
+    const shakeWrapper = document.querySelector('.shake-wrapper');
+    let rawInput = questionInput.textContent || "";
+    let userQuestion = rawInput.replace(/\s+/g, ' ').trim().toLowerCase();
 
-  // Define special questions
-  const specialQuestions = [
-    "what is the meaning of life?",
-    "what is the meaning of the universe?"
-  ];
+    const specialQuestions = [
+      "what is the meaning of life?",
+      "what is the meaning of the universe?",
+      "what's the answer to everything?",
+      "what is the ultimate answer?",
+      "why are we here?",
+      "what is the purpose of existence?",
+      "what is the answer to life, the universe, and everything?",
+      "what is the meaning of it all?",
+      "is there a purpose to life?"
+    ];
 
-  // Check for empty input
-  if (cleanedQuestion === '') {
-    answerEl.textContent = "Ask a question first!";
-    answerEl.classList.add('show');
-    return;
-  }
-
-  // Check if it's not yes/no and not a special question
-  if (!isYesNoQuestion(cleanedQuestion) && !specialQuestions.includes(cleanedQuestion)) {
-    answerEl.textContent = "Try a yes or no question!";
-    answerEl.classList.add('show');
-    return;
-  }
-
-  // Check for repeated question
-  if (cleanedQuestion === lastQuestion) {
-    answerEl.textContent = "You already asked that!";
-    answerEl.classList.add('show');
-    return;
-  }
-
-  answerEl.classList.remove('show');
-  shakeWrapper.classList.remove('shake');
-  void shakeWrapper.offsetWidth;
-  shakeWrapper.classList.add('shake');
-
-  setTimeout(() => {
-    let newAnswer;
-
-    // Handle special questions
-    if (specialQuestions.includes(cleanedQuestion)) {
-      newAnswer = "42";
-    } else {
-      const randomIndex = Math.floor(Math.random() * answers.length);
-      newAnswer = answers[randomIndex];
+    if (userQuestion === '') {
+      answerEl.textContent = "Ask a question first!";
+      answerEl.classList.add('show');
+      return;
     }
 
-    answerEl.textContent = newAnswer;
-    lastQuestion = cleanedQuestion;
+    if (!isYesNoQuestion(userQuestion) && !specialQuestions.includes(userQuestion)) {
+      answerEl.textContent = "Try a yes or no question!";
+      answerEl.classList.add('show');
+      return;
+    }
 
-    const utterance = new SpeechSynthesisUtterance(newAnswer);
-    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-    window.speechSynthesis.speak(utterance);
+    if (userQuestion === lastQuestion) {
+      answerEl.textContent = "You already asked that!";
+      answerEl.classList.add('show');
+      return;
+    }
 
-    sound.load();
-    sound.play().catch(e => console.error("Audio playback failed:", e));
-
-    answerEl.classList.add('show');
+    answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
-  }, 800);
-};
+    void shakeWrapper.offsetWidth;
+    shakeWrapper.classList.add('shake');
+
+    setTimeout(() => {
+      let newAnswer;
+
+      if (specialQuestions.includes(userQuestion)) {
+        newAnswer = "42";
+      } else {
+        const randomIndex = Math.floor(Math.random() * answers.length);
+        newAnswer = answers[randomIndex];
+      }
+
+      answerEl.textContent = newAnswer;
+      lastQuestion = userQuestion;
+
+      const utterance = new SpeechSynthesisUtterance(newAnswer);
+      utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+      window.speechSynthesis.speak(utterance);
+
+      sound.load();
+      sound.play().catch(e => console.error("Audio playback failed:", e));
+
+      answerEl.classList.add('show');
+      shakeWrapper.classList.remove('shake');
+    }, 800);
+  };
 
   askButton.addEventListener('click', shakeBall);
 
