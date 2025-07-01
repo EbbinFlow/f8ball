@@ -58,51 +58,62 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const shakeBall = () => {
-    const shakeWrapper = document.querySelector('.shake-wrapper');
-    let userQuestion = questionInput.textContent.trim();
+  const shakeWrapper = document.querySelector('.shake-wrapper');
+  let userQuestion = questionInput.textContent.trim();
 
-    if (userQuestion === '') {
-      answerEl.textContent = "Ask a question first!";
-      answerEl.classList.add('show');
-      return;
-    }
+  if (userQuestion === '') {
+    answerEl.textContent = "Ask a question first!";
+    answerEl.classList.add('show');
+    return;
+  }
 
-    userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
+  userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
-    if (!isYesNoQuestion(userQuestion)) {
-      answerEl.textContent = "Try a yes or no question!";
-      answerEl.classList.add('show');
-      return;
-    }
+  if (!isYesNoQuestion(userQuestion)) {
+    answerEl.textContent = "Try a yes or no question!";
+    answerEl.classList.add('show');
+    return;
+  }
 
-    if (userQuestion === lastQuestion) {
-      answerEl.textContent = "You already asked that!";
-      answerEl.classList.add('show');
-      return;
-    }
+  if (userQuestion === lastQuestion) {
+    answerEl.textContent = "You already asked that!";
+    answerEl.classList.add('show');
+    return;
+  }
 
-    answerEl.classList.remove('show');
-    shakeWrapper.classList.remove('shake');
-    void shakeWrapper.offsetWidth;
-    shakeWrapper.classList.add('shake');
+  answerEl.classList.remove('show');
+  shakeWrapper.classList.remove('shake');
+  void shakeWrapper.offsetWidth;
+  shakeWrapper.classList.add('shake');
 
-    setTimeout(() => {
+  setTimeout(() => {
+    let newAnswer;
+
+    // Check for special questions
+    if (
+      userQuestion === "what is the meaning of life?" ||
+      userQuestion === "what is the meaning of the universe?"
+    ) {
+      newAnswer = "42";
+    } else {
       const randomIndex = Math.floor(Math.random() * answers.length);
-      const newAnswer = answers[randomIndex];
-      answerEl.textContent = newAnswer;
-      lastQuestion = userQuestion;
+      newAnswer = answers[randomIndex];
+    }
 
-      const utterance = new SpeechSynthesisUtterance(newAnswer);
-      utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-      window.speechSynthesis.speak(utterance);
+    answerEl.textContent = newAnswer;
+    lastQuestion = userQuestion;
 
-      sound.load();
-      sound.play().catch(e => console.error("Audio playback failed:", e));
+    const utterance = new SpeechSynthesisUtterance(newAnswer);
+    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+    window.speechSynthesis.speak(utterance);
 
-      answerEl.classList.add('show');
-      shakeWrapper.classList.remove('shake');
-    }, 800);
-  };
+    sound.load();
+    sound.play().catch(e => console.error("Audio playback failed:", e));
+
+    answerEl.classList.add('show');
+    shakeWrapper.classList.remove('shake');
+  }, 800);
+};
 
   askButton.addEventListener('click', shakeBall);
 
