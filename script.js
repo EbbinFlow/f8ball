@@ -47,6 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const sound = document.getElementById('magicSound');
   let lastQuestion = "";
 
+  function isSpecialQuestion(text) {
+  const cleaned = text.trim().toLowerCase();
+  return cleaned === "what is the meaning of life?" || cleaned === "what is the meaning of the universe?";
+  }
+
   function isYesNoQuestion(text) {
     const trimmed = text.trim().toLowerCase();
     const yesNoStarters = [
@@ -69,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   userQuestion = userQuestion.replace(/\s+/g, ' ').trim().toLowerCase();
 
-  if (!isYesNoQuestion(userQuestion)) {
+  if (!isYesNoQuestion(userQuestion) && !isSpecialQuestion(userQuestion)) {
     answerEl.textContent = "Try a yes or no question!";
     answerEl.classList.add('show');
     return;
