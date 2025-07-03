@@ -74,16 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
     .toLowerCase();
 
   const specialQuestions = [
-    "what is the meaning of life",
-    "what is the meaning of the universe",
-    "whats the answer to everything",
-    "what is the ultimate answer",
-    "why are we here",
-    "what is the purpose of existence",
-    "what is the answer to life the universe and everything",
-    "what is the meaning of it all",
-    "is there a purpose to life"
-  ];
+  "what is the meaning of life",
+  "what is the meaning of the universe",
+  "whats the answer to everything",
+  "what is the ultimate answer",
+  "why are we here",
+  "what is the purpose of existence",
+  "what is the answer to life the universe and everything",
+  "what is the meaning of it all",
+  "is there a purpose to life",
+  "what is the point of all this",
+  "how does it all end",
+  "answer to the ultimate question of life the universe and everything",
+  "what is the meaning of everything"
+];
+
 
   if (userQuestion === '') {
     answerEl.textContent = "Ask a question first!";
