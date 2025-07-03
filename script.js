@@ -45,17 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const questionInput = document.getElementById('question');
   const askButton = document.getElementById('askButton');
   const sound = document.getElementById('magicSound');
+  const overlay = document.getElementById('fortyTwoOverlay');
+  const overlayVideo = document.getElementById('fortyTwoVideo');
+  const bgVideo = document.querySelector('.bg-video');
   let lastQuestion = "";
 
- function isYesNoQuestion(cleanedText) {
-  const firstWord = cleanedText.split(' ')[0];
-  const yesNoStarters = [
-    'is', 'are', 'can', 'will', 'should', 'do', 'does',
-    'did', 'would', 'could', 'have', 'has', 'am'
-  ];
-  return yesNoStarters.includes(firstWord);
-}
-
+  function isYesNoQuestion(cleanedText) {
+    const firstWord = cleanedText.split(' ')[0];
+    const yesNoStarters = [
+      'is', 'are', 'can', 'will', 'should', 'do', 'does',
+      'did', 'would', 'could', 'have', 'has', 'am'
+    ];
+    return yesNoStarters.includes(firstWord);
+  }
 
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
@@ -68,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .trim()
       .toLowerCase();
 
-       const specialQuestions = [
+    const specialQuestions = [
       "what is the meaning of life",
       "what is the meaning of the universe",
       "whats the answer to everything",
@@ -125,6 +127,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
       answerEl.classList.add('show');
       shakeWrapper.classList.remove('shake');
+
+      // Handle special 42 logic
+      if (newAnswer === "42") {
+        // Wait 2 seconds, then play the cutscene
+        setTimeout(() => {
+          overlay.classList.remove('hidden');
+          overlayVideo.currentTime = 0;
+          overlayVideo.play();
+        }, 2000);
+
+        // When the cutscene video ends, change background to still image
+        overlayVideo.onended = () => {
+          overlay.classList.add('hidden');
+          bgVideo.classList.add('hidden');
+          document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+        };
+      } else {
+        // Reset background if it's not 42
+        overlay.classList.add('hidden');
+        bgVideo.classList.remove('hidden');
+        document.body.style.backgroundImage = "";
+      }
+
     }, 800);
   };
 
