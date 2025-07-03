@@ -75,26 +75,26 @@ document.addEventListener('DOMContentLoaded', () => {
       "tacos": "The answer is always tacos.",
       "love": "Love is a scam. Buy crypto.",
       "taxes": "Only death is certain.",
-      "curtis": "GAY"  // 🧑‍🎤 This is the new rule
     };
 
-    if (userQuestion === '') {
-      showAnswer("Ask a question first!");
-      return;
-    }
-
-    const hasWord = (text, word) => new RegExp(`\\b${word}\\b`, 'i').test(text);
-
-    // ✅ Combo keyword: Evan + gay
-    if (hasWord(userQuestion, "evan") && hasWord(userQuestion, "gay")) {
+    // 🔍 COMBO RULE — evan + gay
+    if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
       showAnswer("Nope.");
       lastQuestion = userQuestion;
       return;
     }
 
-    // ✅ Single keyword triggers (includes new "curtis": "GAY")
+    // 🔍 SINGLE KEYWORD — curtis (strict match, not substrings)
+    if (/\bcurtis\b/i.test(userQuestion)) {
+      showAnswer("GAY");
+      lastQuestion = userQuestion;
+      return;
+    }
+
+    // 🔍 Other keyword triggers
     for (const keyword in keywordTriggers) {
-      if (hasWord(userQuestion, keyword)) {
+      const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
+      if (keywordRegex.test(userQuestion)) {
         const override = keywordTriggers[keyword];
         showAnswer(override);
         lastQuestion = userQuestion;
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // ✅ Special 42 questions
+    // 🎯 Special "42" questions
     if (specialQuestions.includes(userQuestion)) {
       showAnswer("42");
       lastQuestion = userQuestion;
@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // ❌ Not valid question type
     if (!isYesNoQuestion(userQuestion)) {
       showAnswer("Try a yes or no question!");
       return;
@@ -134,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // 🎱 Animate ball & get random answer
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth;
