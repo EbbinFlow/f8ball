@@ -43,6 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
     ].includes(firstWord);
   }
 
+  const keywordTriggers = {
+    "toilet": "Ew. Why are you asking the ball about that?",
+    "tacos": "The answer is always tacos.",
+    "love": "Love is a scam. Buy crypto.",
+    "taxes": "Only death is certain.",
+    "gay": "Yes. Everyone knows."
+  };
+
+  const specialQuestions = [
+    "what is the meaning of life",
+    "what is the meaning of the universe",
+    "whats the answer to everything",
+    "what is the ultimate answer",
+    "why are we here",
+    "what is the purpose of existence",
+    "what is the answer to life the universe and everything",
+    "what is the meaning of it all",
+    "is there a purpose to life",
+    "what is the point of all this",
+    "how does it all end",
+    "answer to the ultimate question of life the universe and everything",
+    "what is the meaning of everything"
+  ];
+
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let rawInput = questionInput.textContent || "";
@@ -54,33 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .trim()
       .toLowerCase();
 
-    const specialQuestions = [
-      "what is the meaning of life",
-      "what is the meaning of the universe",
-      "whats the answer to everything",
-      "what is the ultimate answer",
-      "why are we here",
-      "what is the purpose of existence",
-      "what is the answer to life the universe and everything",
-      "what is the meaning of it all",
-      "is there a purpose to life",
-      "what is the point of all this",
-      "how does it all end",
-      "answer to the ultimate question of life the universe and everything",
-      "what is the meaning of everything"
-    ];
-
-    const keywordTriggers = {
-      "toilet": "Ew. Why are you asking the ball about that?",
-      "tacos": "The answer is always tacos.",
-      "love": "Love is a scam. Buy crypto.",
-      "taxes": "Only death is certain.",
-      "gay": "Yes. Everyone knows."
-    };
-
     if (userQuestion === '') {
-      answerEl.textContent = "Ask a question first!";
-      answerEl.classList.add('show');
+      showAnswer("Ask a question first!");
       return;
     }
 
@@ -91,23 +90,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 🔑 Keyword-based override SECOND
+    // 🔑 Single keyword overrides NEXT
     for (const keyword in keywordTriggers) {
-      const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
-      if (keywordRegex.test(userQuestion)) {
-        const override = keywordTriggers[keyword];
-        showAnswer(override);
+      if (userQuestion.includes(keyword)) {
+        showAnswer(keywordTriggers[keyword]);
         lastQuestion = userQuestion;
         return;
       }
     }
 
-    // 🎯 Special '42' questions THIRD
+    // 🔮 Special 42 questions NEXT
     if (specialQuestions.includes(userQuestion)) {
       showAnswer("42");
       lastQuestion = userQuestion;
 
-      // Trigger cutscene after delay
       setTimeout(() => {
         overlay.classList.remove('hidden');
         overlayVideo.currentTime = 0;
@@ -122,20 +118,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.backgroundPosition = "center";
         document.body.style.backgroundRepeat = "no-repeat";
       };
+
       return;
     }
 
-    // 🧠 Check if it's even a yes/no question
+    // 💬 Not a yes/no question
     if (!isYesNoQuestion(userQuestion)) {
-      answerEl.textContent = "Try a yes or no question!";
-      answerEl.classList.add('show');
+      showAnswer("Try a yes or no question!");
       return;
     }
 
-    // 🔁 Prevent repeat
+    // 🔁 Repeat check
     if (userQuestion === lastQuestion) {
-      answerEl.textContent = "You already asked that!";
-      answerEl.classList.add('show');
+      showAnswer("You already asked that!");
       return;
     }
 
@@ -146,15 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
     shakeWrapper.classList.add('shake');
 
     setTimeout(() => {
-      let finalAnswer = answers[Math.floor(Math.random() * answers.length)];
-      showAnswer(finalAnswer);
+      const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+      showAnswer(randomAnswer);
       lastQuestion = userQuestion;
 
       // Reset visuals
       overlay.classList.add('hidden');
       if (bgVideo) bgVideo.classList.remove('hidden');
       document.body.style.backgroundImage = "";
-
     }, 800);
   };
 
