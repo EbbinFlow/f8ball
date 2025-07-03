@@ -84,134 +84,77 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // 🔒 Combo override FIRST
+    if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
+      showAnswer("Nope.");
+      lastQuestion = userQuestion;
+      return;
+    }
+
+    // 🔑 Keyword-based override SECOND
     for (const keyword in keywordTriggers) {
-      if (userQuestion.includes(keyword)) {
+      const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
+      if (keywordRegex.test(userQuestion)) {
         const override = keywordTriggers[keyword];
         showAnswer(override);
+        lastQuestion = userQuestion;
         return;
       }
     }
 
-      // ✅ Keyword override FIRST — with better word matching
-  for (const keyword in keywordTriggers) {
-    const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
-    if (keywordRegex.test(userQuestion)) {
-      const override = keywordTriggers[keyword];
-      answerEl.textContent = override;
+    // 🎯 Special '42' questions THIRD
+    if (specialQuestions.includes(userQuestion)) {
+      showAnswer("42");
       lastQuestion = userQuestion;
 
-      const utterance = new SpeechSynthesisUtterance(override);
-      utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-      window.speechSynthesis.speak(utterance);
+      // Trigger cutscene after delay
+      setTimeout(() => {
+        overlay.classList.remove('hidden');
+        overlayVideo.currentTime = 0;
+        overlayVideo.play().catch(e => console.error("Video failed to play:", e));
+      }, 2000);
 
-      sound.load();
-      sound.play().catch(e => console.error("Audio playback failed:", e));
+      overlayVideo.onended = () => {
+        overlay.classList.add('hidden');
+        if (bgVideo) bgVideo.classList.add('hidden');
+        document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+      };
+      return;
+    }
+
+    // 🧠 Check if it's even a yes/no question
+    if (!isYesNoQuestion(userQuestion)) {
+      answerEl.textContent = "Try a yes or no question!";
       answerEl.classList.add('show');
       return;
     }
-  }
-    
-    // ✅ Special '42' questions first
-if (specialQuestions.includes(userQuestion)) {
-  answerEl.textContent = "42";
-  lastQuestion = userQuestion;
 
-  const utterance = new SpeechSynthesisUtterance("42");
-  utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-  window.speechSynthesis.speak(utterance);
-
-  sound.load();
-  sound.play().catch(e => console.error("Audio playback failed:", e));
-  answerEl.classList.add('show');
-
-  // Trigger cutscene after delay
-  setTimeout(() => {
-    overlay.classList.remove('hidden');
-    overlayVideo.currentTime = 0;
-    overlayVideo.play().catch(e => console.error("Video failed to play:", e));
-  }, 2000);
-
-  overlayVideo.onended = () => {
-    overlay.classList.add('hidden');
-    if (bgVideo) bgVideo.classList.add('hidden');
-    document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.backgroundRepeat = "no-repeat";
-  };
-
-  return;
-}
-
-// ✅ Then check for keyword-based override
-for (const keyword in keywordTriggers) {
-  const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
-  if (keywordRegex.test(userQuestion)) {
-    const override = keywordTriggers[keyword];
-    answerEl.textContent = override;
-    lastQuestion = userQuestion;
-
-    const utterance = new SpeechSynthesisUtterance(override);
-    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-    window.speechSynthesis.speak(utterance);
-
-    sound.load();
-    sound.play().catch(e => console.error("Audio playback failed:", e));
-    answerEl.classList.add('show');
-    return;
-  }
-}
-
-// ✅ Now fall back to checking if it's a valid yes/no question
-if (!isYesNoQuestion(userQuestion)) {
-  answerEl.textContent = "Try a yes or no question!";
-  answerEl.classList.add('show');
-  return;
-}
-
-
+    // 🔁 Prevent repeat
     if (userQuestion === lastQuestion) {
       answerEl.textContent = "You already asked that!";
       answerEl.classList.add('show');
       return;
     }
 
+    // 🪄 Shake and answer
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth;
     shakeWrapper.classList.add('shake');
 
     setTimeout(() => {
-      let finalAnswer;
-      if (specialQuestions.includes(userQuestion)) {
-        finalAnswer = "42";
-      } else {
-        finalAnswer = answers[Math.floor(Math.random() * answers.length)];
-      }
-
+      let finalAnswer = answers[Math.floor(Math.random() * answers.length)];
       showAnswer(finalAnswer);
       lastQuestion = userQuestion;
 
-      if (finalAnswer === "42") {
-        setTimeout(() => {
-          overlay.classList.remove('hidden');
-          overlayVideo.currentTime = 0;
-          overlayVideo.play().catch(e => console.error("Video playback failed:", e));
-        }, 2000);
+      // Reset visuals
+      overlay.classList.add('hidden');
+      if (bgVideo) bgVideo.classList.remove('hidden');
+      document.body.style.backgroundImage = "";
 
-        overlayVideo.onended = () => {
-          overlay.classList.add('hidden');
-          if (bgVideo) bgVideo.classList.add('hidden');
-          document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
-          document.body.style.backgroundSize = "cover";
-          document.body.style.backgroundPosition = "center";
-          document.body.style.backgroundRepeat = "no-repeat";
-        };
-      } else {
-        overlay.classList.add('hidden');
-        if (bgVideo) bgVideo.classList.remove('hidden');
-        document.body.style.backgroundImage = "";
-      }
     }, 800);
   };
 
