@@ -74,21 +74,30 @@ document.addEventListener('DOMContentLoaded', () => {
     .toLowerCase();
 
   const specialQuestions = [
-  "what is the meaning of life",
-  "what is the meaning of the universe",
-  "whats the answer to everything",
-  "what is the ultimate answer",
-  "why are we here",
-  "what is the purpose of existence",
-  "what is the answer to life the universe and everything",
-  "what is the meaning of it all",
-  "is there a purpose to life",
-  "what is the point of all this",
-  "how does it all end",
-  "answer to the ultimate question of life the universe and everything",
-  "what is the meaning of everything"
-];
+    "what is the meaning of life",
+    "what is the meaning of the universe",
+    "whats the answer to everything",
+    "what is the ultimate answer",
+    "why are we here",
+    "what is the purpose of existence",
+    "what is the answer to life the universe and everything",
+    "what is the meaning of it all",
+    "is there a purpose to life",
+    "what is the point of all this",
+    "how does it all end",
+    "answer to the ultimate question of life the universe and everything",
+    "what is the meaning of everything"
+  ];
 
+  // 🔑 Keyword trigger list
+  const keywordTriggers = {
+    "destiny": "Your destiny is unclear... maybe refresh the page.",
+    "toilet": "Ew. Why are you asking the ball about that?",
+    "tacos": "The answer is always tacos.",
+    "love": "Love is a scam. Buy crypto.",
+    "taxes": "Only death is certain."
+    "gay": "Yes. Everyone Knows."
+  };
 
   if (userQuestion === '') {
     answerEl.textContent = "Ask a question first!";
@@ -116,25 +125,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     let newAnswer;
 
-        // Keyword-based overrides
-    const keywordTriggers = {
-      "toilet": "Ew. Why are you asking the ball about that?",
-      "tacos": "The answer is always tacos.",
-      "love": "Love is a scam. Buy crypto.",
-      "taxes": "Only death is certain."
-      "gay": "Yes. Everyone knows."
-    };
-    
+    // 🔍 Check for keyword match
     let overrideAnswer = null;
     for (const keyword in keywordTriggers) {
       if (userQuestion.includes(keyword)) {
         overrideAnswer = keywordTriggers[keyword];
+        console.log(`🧠 Matched keyword "${keyword}" → "${overrideAnswer}"`);
         break;
       }
     }
 
-    
-        if (overrideAnswer) {
+    // 🧠 Decision logic
+    if (overrideAnswer) {
       newAnswer = overrideAnswer;
     } else if (specialQuestions.includes(userQuestion)) {
       newAnswer = "42";
@@ -143,8 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       newAnswer = answers[randomIndex];
     }
 
-
-    console.log("🪄 Answer:", newAnswer);
+    console.log("🔮 Final answer:", newAnswer);
 
     answerEl.textContent = newAnswer;
     lastQuestion = userQuestion;
@@ -159,45 +160,33 @@ document.addEventListener('DOMContentLoaded', () => {
     answerEl.classList.add('show');
     shakeWrapper.classList.remove('shake');
 
+    // 🎬 Cutscene logic for 42
     if (newAnswer === "42") {
-      console.log("🎬 42 detected. Starting 2-second delay...");
-
+      console.log("🎬 42 triggered. Playing cutscene.");
       setTimeout(() => {
-        if (!overlay || !overlayVideo) {
-          console.error("❌ overlay or overlayVideo element missing.");
-          return;
-        }
-
-        console.log("🎥 Playing 42.mp4...");
         overlay.classList.remove('hidden');
         overlayVideo.currentTime = 0;
-
-        overlayVideo.play().then(() => {
-          console.log("✅ Video started playing.");
-        }).catch(err => {
-          console.error("❌ Failed to play video:", err);
-        });
-
-        overlayVideo.onended = () => {
-          console.log("🎞 Cutscene finished. Switching to still background.");
-          overlay.classList.add('hidden');
-          if (bgVideo) bgVideo.classList.add('hidden');
-          document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
-          document.body.style.backgroundSize = "cover";
-          document.body.style.backgroundPosition = "center";
-          document.body.style.backgroundRepeat = "no-repeat";
-        };
+        overlayVideo.play().catch(e => console.error("Video failed to play:", e));
       }, 2000);
+
+      overlayVideo.onended = () => {
+        console.log("🎞 Cutscene finished. Showing image background.");
+        overlay.classList.add('hidden');
+        if (bgVideo) bgVideo.classList.add('hidden');
+        document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+      };
     } else {
-      console.log("🔁 Resetting to default background.");
-      if (overlay) overlay.classList.add('hidden');
+      // Reset if not 42
+      overlay.classList.add('hidden');
       if (bgVideo) bgVideo.classList.remove('hidden');
       document.body.style.backgroundImage = "";
     }
+
   }, 800);
 };
-
-
 
   askButton.addEventListener('click', shakeBall);
 
