@@ -111,11 +111,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
     
-    if (!isYesNoQuestion(userQuestion) && !specialQuestions.includes(userQuestion)) {
-      answerEl.textContent = "Try a yes or no question!";
-      answerEl.classList.add('show');
-      return;
-    }
+    // ✅ Special '42' questions first
+if (specialQuestions.includes(userQuestion)) {
+  answerEl.textContent = "42";
+  lastQuestion = userQuestion;
+
+  const utterance = new SpeechSynthesisUtterance("42");
+  utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+  window.speechSynthesis.speak(utterance);
+
+  sound.load();
+  sound.play().catch(e => console.error("Audio playback failed:", e));
+  answerEl.classList.add('show');
+
+  // Trigger cutscene after delay
+  setTimeout(() => {
+    overlay.classList.remove('hidden');
+    overlayVideo.currentTime = 0;
+    overlayVideo.play().catch(e => console.error("Video failed to play:", e));
+  }, 2000);
+
+  overlayVideo.onended = () => {
+    overlay.classList.add('hidden');
+    if (bgVideo) bgVideo.classList.add('hidden');
+    document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+  };
+
+  return;
+}
+
+// ✅ Then check for keyword-based override
+for (const keyword in keywordTriggers) {
+  const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
+  if (keywordRegex.test(userQuestion)) {
+    const override = keywordTriggers[keyword];
+    answerEl.textContent = override;
+    lastQuestion = userQuestion;
+
+    const utterance = new SpeechSynthesisUtterance(override);
+    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+    window.speechSynthesis.speak(utterance);
+
+    sound.load();
+    sound.play().catch(e => console.error("Audio playback failed:", e));
+    answerEl.classList.add('show');
+    return;
+  }
+}
+
+// ✅ Now fall back to checking if it's a valid yes/no question
+if (!isYesNoQuestion(userQuestion)) {
+  answerEl.textContent = "Try a yes or no question!";
+  answerEl.classList.add('show');
+  return;
+}
+
 
     if (userQuestion === lastQuestion) {
       answerEl.textContent = "You already asked that!";
