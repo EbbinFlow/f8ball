@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return yesNoStarters.includes(firstWord);
   }
 
-  const shakeBall = () => {
+ const shakeBall = () => {
   const shakeWrapper = document.querySelector('.shake-wrapper');
   const overlay = document.getElementById('fortyTwoOverlay');
   const overlayVideo = document.getElementById('fortyTwoVideo');
@@ -89,14 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
     "what is the meaning of everything"
   ];
 
-  // 🔑 Keyword trigger list
   const keywordTriggers = {
-    "destiny": "Your destiny is unclear... maybe refresh the page.",
     "toilet": "Ew. Why are you asking the ball about that?",
     "tacos": "The answer is always tacos.",
     "love": "Love is a scam. Buy crypto.",
-    "taxes": "Only death is certain."
-    "gay": "Yes. Everyone Knows."
+    "taxes": "Only death is certain.",
+    "gay": "Yes. Everyone knows."
   };
 
   if (userQuestion === '') {
@@ -105,6 +103,25 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // ✅ Keyword override comes FIRST now
+  for (const keyword in keywordTriggers) {
+    if (userQuestion.includes(keyword)) {
+      const override = keywordTriggers[keyword];
+      answerEl.textContent = override;
+      lastQuestion = userQuestion;
+
+      const utterance = new SpeechSynthesisUtterance(override);
+      utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+      window.speechSynthesis.speak(utterance);
+
+      sound.load();
+      sound.play().catch(e => console.error("Audio playback failed:", e));
+      answerEl.classList.add('show');
+      return;
+    }
+  }
+
+  // ✅ Only apply yes/no filter if it’s NOT a keyword trigger
   if (!isYesNoQuestion(userQuestion) && !specialQuestions.includes(userQuestion)) {
     answerEl.textContent = "Try a yes or no question!";
     answerEl.classList.add('show');
@@ -116,6 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     answerEl.classList.add('show');
     return;
   }
+
+  // [ Keep the rest of your function below this the same... ]
+
 
   answerEl.classList.remove('show');
   shakeWrapper.classList.remove('shake');
