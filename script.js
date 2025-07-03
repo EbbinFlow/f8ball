@@ -35,37 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const bgVideo = document.querySelector('.bg-video');
   let lastQuestion = "";
 
-  const keywordTriggers = {
-    "toilet": "Ew. Why are you asking the ball about that?",
-    "tacos": "The answer is always tacos.",
-    "love": "Love is a scam. Buy crypto.",
-    "taxes": "Only death is certain.",
-    "gay": "Yes. Everyone knows."
-  };
-
-  const comboTriggers = [
-    {
-      words: ["evan", "gay"],
-      response: "Nope."
-    }
-  ];
-
-  const specialQuestions = [
-    "what is the meaning of life",
-    "what is the meaning of the universe",
-    "whats the answer to everything",
-    "what is the ultimate answer",
-    "why are we here",
-    "what is the purpose of existence",
-    "what is the answer to life the universe and everything",
-    "what is the meaning of it all",
-    "is there a purpose to life",
-    "what is the point of all this",
-    "how does it all end",
-    "answer to the ultimate question of life the universe and everything",
-    "what is the meaning of everything"
-  ];
-
   function isYesNoQuestion(text) {
     const firstWord = text.split(' ')[0];
     return [
@@ -73,6 +42,110 @@ document.addEventListener('DOMContentLoaded', () => {
       'did', 'would', 'could', 'have', 'has', 'am'
     ].includes(firstWord);
   }
+
+  const shakeBall = () => {
+    const shakeWrapper = document.querySelector('.shake-wrapper');
+    let rawInput = questionInput.textContent || "";
+
+    let userQuestion = rawInput
+      .replace(/[’‘]/g, "'")
+      .replace(/[^\w\s']/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+
+    const specialQuestions = [
+      "what is the meaning of life",
+      "what is the meaning of the universe",
+      "whats the answer to everything",
+      "what is the ultimate answer",
+      "why are we here",
+      "what is the purpose of existence",
+      "what is the answer to life the universe and everything",
+      "what is the meaning of it all",
+      "is there a purpose to life",
+      "what is the point of all this",
+      "how does it all end",
+      "answer to the ultimate question of life the universe and everything",
+      "what is the meaning of everything"
+    ];
+
+    const keywordTriggers = {
+      "toilet": "Ew. Why are you asking the ball about that?",
+      "tacos": "The answer is always tacos.",
+      "love": "Love is a scam. Buy crypto.",
+      "taxes": "Only death is certain."
+    };
+
+    if (userQuestion === '') {
+      showAnswer("Ask a question first!");
+      return;
+    }
+
+    // ✅ Combo keyword override: evan + gay
+    if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
+      showAnswer("Nope.");
+      lastQuestion = userQuestion;
+      return;
+    }
+
+    // ✅ Single-word keyword triggers
+    for (const keyword in keywordTriggers) {
+      if (userQuestion.includes(keyword)) {
+        showAnswer(keywordTriggers[keyword]);
+        lastQuestion = userQuestion;
+        return;
+      }
+    }
+
+    // ✅ Special 42 questions
+    if (specialQuestions.includes(userQuestion)) {
+      showAnswer("42");
+      lastQuestion = userQuestion;
+
+      setTimeout(() => {
+        overlay.classList.remove('hidden');
+        overlayVideo.currentTime = 0;
+        overlayVideo.play().catch(e => console.error("Video failed to play:", e));
+      }, 2000);
+
+      overlayVideo.onended = () => {
+        overlay.classList.add('hidden');
+        if (bgVideo) bgVideo.classList.add('hidden');
+        document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+      };
+
+      return;
+    }
+
+    if (!isYesNoQuestion(userQuestion)) {
+      showAnswer("Try a yes or no question!");
+      return;
+    }
+
+    if (userQuestion === lastQuestion) {
+      showAnswer("You already asked that!");
+      return;
+    }
+
+    answerEl.classList.remove('show');
+    shakeWrapper.classList.remove('shake');
+    void shakeWrapper.offsetWidth;
+    shakeWrapper.classList.add('shake');
+
+    setTimeout(() => {
+      const finalAnswer = answers[Math.floor(Math.random() * answers.length)];
+      showAnswer(finalAnswer);
+      lastQuestion = userQuestion;
+
+      overlay.classList.add('hidden');
+      if (bgVideo) bgVideo.classList.remove('hidden');
+      document.body.style.backgroundImage = "";
+    }, 800);
+  };
 
   const showAnswer = (text) => {
     answerEl.textContent = text;
@@ -86,106 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
     sound.play().catch(e => console.error("Audio playback failed:", e));
   };
 
-  const shakeBall = () => {
-  const shakeWrapper = document.querySelector('.shake-wrapper');
-  let rawInput = questionInput.textContent || "";
+  askButton.addEventListener('click', shakeBall);
 
-  let userQuestion = rawInput
-    .replace(/[’‘]/g, "'")
-    .replace(/[^\w\s']/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
-
-  if (userQuestion === '') {
-    showAnswer("Ask a question first!");
-    return;
-  }
-
-  // ✅ Combo trigger: evan + gay
-  if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
-    showAnswer("Nope.");
-    lastQuestion = userQuestion;
-    return;
-  }
-
-  // ✅ Single keyword triggers (excluding "gay")
-  const keywordTriggers = {
-    "toilet": "Ew. Why are you asking the ball about that?",
-    "tacos": "The answer is always tacos.",
-    "love": "Love is a scam. Buy crypto.",
-    "taxes": "Only death is certain."
-  };
-
-  for (const keyword in keywordTriggers) {
-    if (userQuestion.includes(keyword)) {
-      showAnswer(keywordTriggers[keyword]);
-      lastQuestion = userQuestion;
-      return;
+  questionInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      shakeBall();
     }
-  }
+  });
 
-  // ✅ Special 42 logic
-  const specialQuestions = [
-    "what is the meaning of life",
-    "what is the meaning of the universe",
-    "whats the answer to everything",
-    "what is the ultimate answer",
-    "why are we here",
-    "what is the purpose of existence",
-    "what is the answer to life the universe and everything",
-    "what is the meaning of it all",
-    "is there a purpose to life",
-    "what is the point of all this",
-    "how does it all end",
-    "answer to the ultimate question of life the universe and everything",
-    "what is the meaning of everything"
-  ];
-
-  if (specialQuestions.includes(userQuestion)) {
-    showAnswer("42");
-    lastQuestion = userQuestion;
-
-    setTimeout(() => {
-      overlay.classList.remove('hidden');
-      overlayVideo.currentTime = 0;
-      overlayVideo.play().catch(e => console.error("Video failed to play:", e));
-    }, 2000);
-
-    overlayVideo.onended = () => {
-      overlay.classList.add('hidden');
-      if (bgVideo) bgVideo.classList.add('hidden');
-      document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
-      document.body.style.backgroundSize = "cover";
-      document.body.style.backgroundPosition = "center";
-      document.body.style.backgroundRepeat = "no-repeat";
-    };
-
-    return;
-  }
-
-  if (!isYesNoQuestion(userQuestion)) {
-    showAnswer("Try a yes or no question!");
-    return;
-  }
-
-  if (userQuestion === lastQuestion) {
-    showAnswer("You already asked that!");
-    return;
-  }
-
-  answerEl.classList.remove('show');
-  shakeWrapper.classList.remove('shake');
-  void shakeWrapper.offsetWidth;
-  shakeWrapper.classList.add('shake');
-
-  setTimeout(() => {
-    const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-    showAnswer(randomAnswer);
-    lastQuestion = userQuestion;
-
-    overlay.classList.add('hidden');
-    if (bgVideo) bgVideo.classList.remove('hidden');
-    document.body.style.backgroundImage = "";
-  }, 800);
-};
+  questionInput.addEventListener('blur', () => {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  });
+});
