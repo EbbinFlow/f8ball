@@ -116,12 +116,33 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     let newAnswer;
 
-    if (specialQuestions.includes(userQuestion)) {
+        // Keyword-based overrides
+    const keywordTriggers = {
+      "toilet": "Ew. Why are you asking the ball about that?",
+      "tacos": "The answer is always tacos.",
+      "love": "Love is a scam. Buy crypto.",
+      "taxes": "Only death is certain."
+      "gay": "Yes. Everyone knows."
+    };
+    
+    let overrideAnswer = null;
+    for (const keyword in keywordTriggers) {
+      if (userQuestion.includes(keyword)) {
+        overrideAnswer = keywordTriggers[keyword];
+        break;
+      }
+    }
+
+    
+        if (overrideAnswer) {
+      newAnswer = overrideAnswer;
+    } else if (specialQuestions.includes(userQuestion)) {
       newAnswer = "42";
     } else {
       const randomIndex = Math.floor(Math.random() * answers.length);
       newAnswer = answers[randomIndex];
     }
+
 
     console.log("🪄 Answer:", newAnswer);
 
