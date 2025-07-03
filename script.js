@@ -92,6 +92,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+      // ✅ Keyword override FIRST — with better word matching
+  for (const keyword in keywordTriggers) {
+    const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
+    if (keywordRegex.test(userQuestion)) {
+      const override = keywordTriggers[keyword];
+      answerEl.textContent = override;
+      lastQuestion = userQuestion;
+
+      const utterance = new SpeechSynthesisUtterance(override);
+      utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+      window.speechSynthesis.speak(utterance);
+
+      sound.load();
+      sound.play().catch(e => console.error("Audio playback failed:", e));
+      answerEl.classList.add('show');
+      return;
+    }
+  }
+    
     if (!isYesNoQuestion(userQuestion) && !specialQuestions.includes(userQuestion)) {
       answerEl.textContent = "Try a yes or no question!";
       answerEl.classList.add('show');
