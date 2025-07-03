@@ -60,98 +60,104 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const shakeBall = () => {
-    const shakeWrapper = document.querySelector('.shake-wrapper');
-    let rawInput = questionInput.textContent || "";
+  const shakeWrapper = document.querySelector('.shake-wrapper');
+  let rawInput = questionInput.textContent || "";
 
-    let userQuestion = rawInput
-      .replace(/[’‘]/g, "'")         // Convert curly quotes
-      .replace(/[^\w\s']/g, '')      // Remove punctuation except apostrophes
-      .replace(/\s+/g, ' ')          // Collapse extra spaces
-      .trim()
-      .toLowerCase();
+  let userQuestion = rawInput
+    .replace(/[’‘]/g, "'")
+    .replace(/[^\w\s']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 
-    const specialQuestions = [
-      "what is the meaning of life",
-      "what is the meaning of the universe",
-      "whats the answer to everything",
-      "what is the ultimate answer",
-      "why are we here",
-      "what is the purpose of existence",
-      "what is the answer to life the universe and everything",
-      "what is the meaning of it all",
-      "is there a purpose to life"
-    ];
+  const specialQuestions = [
+    "what is the meaning of life",
+    "what is the meaning of the universe",
+    "whats the answer to everything",
+    "what is the ultimate answer",
+    "why are we here",
+    "what is the purpose of existence",
+    "what is the answer to life the universe and everything",
+    "what is the meaning of it all",
+    "is there a purpose to life"
+  ];
 
-    if (userQuestion === '') {
-      answerEl.textContent = "Ask a question first!";
-      answerEl.classList.add('show');
-      return;
+  if (userQuestion === '') {
+    answerEl.textContent = "Ask a question first!";
+    answerEl.classList.add('show');
+    return;
+  }
+
+  if (!isYesNoQuestion(userQuestion) && !specialQuestions.includes(userQuestion)) {
+    answerEl.textContent = "Try a yes or no question!";
+    answerEl.classList.add('show');
+    return;
+  }
+
+  if (userQuestion === lastQuestion) {
+    answerEl.textContent = "You already asked that!";
+    answerEl.classList.add('show');
+    return;
+  }
+
+  answerEl.classList.remove('show');
+  shakeWrapper.classList.remove('shake');
+  void shakeWrapper.offsetWidth;
+  shakeWrapper.classList.add('shake');
+
+  setTimeout(() => {
+    let newAnswer;
+
+    if (specialQuestions.includes(userQuestion)) {
+      newAnswer = "42";
+    } else {
+      const randomIndex = Math.floor(Math.random() * answers.length);
+      newAnswer = answers[randomIndex];
     }
 
-    if (!isYesNoQuestion(userQuestion) && !specialQuestions.includes(userQuestion)) {
-      answerEl.textContent = "Try a yes or no question!";
-      answerEl.classList.add('show');
-      return;
-    }
+    answerEl.textContent = newAnswer;
+    lastQuestion = userQuestion;
 
-    if (userQuestion === lastQuestion) {
-      answerEl.textContent = "You already asked that!";
-      answerEl.classList.add('show');
-      return;
-    }
+    const utterance = new SpeechSynthesisUtterance(newAnswer);
+    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+    window.speechSynthesis.speak(utterance);
 
-    answerEl.classList.remove('show');
+    sound.load();
+    sound.play().catch(e => console.error("Audio playback failed:", e));
+
+    answerEl.classList.add('show');
     shakeWrapper.classList.remove('shake');
-    void shakeWrapper.offsetWidth;
-    shakeWrapper.classList.add('shake');
 
-    setTimeout(() => {
-      let newAnswer;
+    // --- 42 Cutscene Logic ---
+    const overlay = document.getElementById('fortyTwoOverlay');
+    const overlayVideo = document.getElementById('fortyTwoVideo');
+    const bgVideo = document.querySelector('.bg-video');
 
-      if (specialQuestions.includes(userQuestion)) {
-        newAnswer = "42";
-      } else {
-        const randomIndex = Math.floor(Math.random() * answers.length);
-        newAnswer = answers[randomIndex];
-      }
+    if (newAnswer === "42" && overlay && overlayVideo && bgVideo) {
+      console.log("🎬 42 triggered – playing cutscene...");
 
-      answerEl.textContent = newAnswer;
-      lastQuestion = userQuestion;
+      setTimeout(() => {
+        overlay.classList.remove('hidden');
+        overlayVideo.currentTime = 0;
+        overlayVideo.play().catch(e => console.error("Video failed to play:", e));
+      }, 2000);
 
-      const utterance = new SpeechSynthesisUtterance(newAnswer);
-      utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-      window.speechSynthesis.speak(utterance);
-
-      sound.load();
-      sound.play().catch(e => console.error("Audio playback failed:", e));
-
-      answerEl.classList.add('show');
-      shakeWrapper.classList.remove('shake');
-
-      // Handle special 42 logic
-      if (newAnswer === "42") {
-        // Wait 2 seconds, then play the cutscene
-        setTimeout(() => {
-          overlay.classList.remove('hidden');
-          overlayVideo.currentTime = 0;
-          overlayVideo.play();
-        }, 2000);
-
-        // When the cutscene video ends, change background to still image
-        overlayVideo.onended = () => {
-          overlay.classList.add('hidden');
-          bgVideo.classList.add('hidden');
-          document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
-        };
-      } else {
-        // Reset background if it's not 42
+      overlayVideo.onended = () => {
+        console.log("🎬 Cutscene ended – showing still background");
         overlay.classList.add('hidden');
-        bgVideo.classList.remove('hidden');
-        document.body.style.backgroundImage = "";
-      }
+        bgVideo.classList.add('hidden');
+        document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+      };
+    } else {
+      // Reset background for non-42 answers
+      if (overlay) overlay.classList.add('hidden');
+      if (bgVideo) bgVideo.classList.remove('hidden');
+      document.body.style.backgroundImage = "";
+    }
 
-    }, 800);
-  };
+  }, 800);
+};
+
 
   askButton.addEventListener('click', shakeBall);
 
