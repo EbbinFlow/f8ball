@@ -74,7 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "toilet": "Ew. Why are you asking the ball about that?",
       "tacos": "The answer is always tacos.",
       "love": "Love is a scam. Buy crypto.",
-      "taxes": "Only death is certain."
+      "taxes": "Only death is certain.",
+      "curtis": "GAY"  // 🧑‍🎤 This is the new rule
     };
 
     if (userQuestion === '') {
@@ -84,20 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hasWord = (text, word) => new RegExp(`\\b${word}\\b`, 'i').test(text);
 
-    // ✅ Combo keyword rules
+    // ✅ Combo keyword: Evan + gay
     if (hasWord(userQuestion, "evan") && hasWord(userQuestion, "gay")) {
       showAnswer("Nope.");
       lastQuestion = userQuestion;
       return;
     }
 
-    if (hasWord(userQuestion, "curtis") && hasWord(userQuestion, "gay")) {
-      showAnswer("Yes. Everyone knows.");
-      lastQuestion = userQuestion;
-      return;
-    }
-
-    // ✅ Single keyword triggers
+    // ✅ Single keyword triggers (includes new "curtis": "GAY")
     for (const keyword in keywordTriggers) {
       if (hasWord(userQuestion, keyword)) {
         const override = keywordTriggers[keyword];
@@ -107,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // ✅ Special question: 42
+    // ✅ Special 42 questions
     if (specialQuestions.includes(userQuestion)) {
       showAnswer("42");
       lastQuestion = userQuestion;
@@ -129,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // ✅ Yes/No check fallback
     if (!isYesNoQuestion(userQuestion)) {
       showAnswer("Try a yes or no question!");
       return;
@@ -146,11 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
     shakeWrapper.classList.add('shake');
 
     setTimeout(() => {
-      let finalAnswer = answers[Math.floor(Math.random() * answers.length)];
+      const finalAnswer = answers[Math.floor(Math.random() * answers.length)];
       showAnswer(finalAnswer);
       lastQuestion = userQuestion;
 
-      // Reset cutscene if not 42
       overlay.classList.add('hidden');
       if (bgVideo) bgVideo.classList.remove('hidden');
       document.body.style.backgroundImage = "";
