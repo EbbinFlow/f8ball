@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sound.play().catch(e => console.error("Audio playback failed:", e));
   };
 
-  const shakeBall = () => {
+   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let rawInput = questionInput.textContent || "";
 
@@ -102,16 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // ✅ Combo keyword override FIRST
-    for (const combo of comboTriggers) {
-      if (combo.words.every(word => userQuestion.includes(word))) {
-        showAnswer(combo.response);
-        lastQuestion = userQuestion;
-        return;
-      }
+    // ✅ 1. Combo trigger check FIRST (evan + gay)
+    if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
+      showAnswer("Nope.");
+      lastQuestion = userQuestion;
+      return;
     }
 
-    // ✅ Single keyword triggers NEXT
+    // ✅ 2. Single keyword trigger check
+    const keywordTriggers = {
+      "toilet": "Ew. Why are you asking the ball about that?",
+      "tacos": "The answer is always tacos.",
+      "love": "Love is a scam. Buy crypto.",
+      "taxes": "Only death is certain.",
+      "gay": "Yes. Everyone knows."
+    };
+
     for (const keyword in keywordTriggers) {
       if (userQuestion.includes(keyword)) {
         showAnswer(keywordTriggers[keyword]);
@@ -120,7 +126,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // ✅ Special 42 logic
+    // ✅ 3. Special 42 questions
+    const specialQuestions = [
+      "what is the meaning of life",
+      "what is the meaning of the universe",
+      "whats the answer to everything",
+      "what is the ultimate answer",
+      "why are we here",
+      "what is the purpose of existence",
+      "what is the answer to life the universe and everything",
+      "what is the meaning of it all",
+      "is there a purpose to life",
+      "what is the point of all this",
+      "how does it all end",
+      "answer to the ultimate question of life the universe and everything",
+      "what is the meaning of everything"
+    ];
+
     if (specialQuestions.includes(userQuestion)) {
       showAnswer("42");
       lastQuestion = userQuestion;
@@ -143,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // ✅ 4. Yes/no filter
     if (!isYesNoQuestion(userQuestion)) {
       showAnswer("Try a yes or no question!");
       return;
@@ -153,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Shake animation and random answer
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth;
@@ -164,11 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
       showAnswer(randomAnswer);
       lastQuestion = userQuestion;
 
-      // Reset background if not 42
       overlay.classList.add('hidden');
       if (bgVideo) bgVideo.classList.remove('hidden');
       document.body.style.backgroundImage = "";
     }, 800);
+  };
+
+  const showAnswer = (text) => {
+    answerEl.textContent = text;
+    answerEl.classList.add('show');
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+    window.speechSynthesis.speak(utterance);
+
+    sound.load();
+    sound.play().catch(e => console.error("Audio playback failed:", e));
   };
 
   askButton.addEventListener('click', shakeBall);
