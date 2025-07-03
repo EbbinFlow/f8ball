@@ -61,6 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const shakeBall = () => {
   const shakeWrapper = document.querySelector('.shake-wrapper');
+  const overlay = document.getElementById('fortyTwoOverlay');
+  const overlayVideo = document.getElementById('fortyTwoVideo');
+  const bgVideo = document.querySelector('.bg-video');
   let rawInput = questionInput.textContent || "";
 
   let userQuestion = rawInput
@@ -115,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
       newAnswer = answers[randomIndex];
     }
 
+    console.log("🪄 Answer:", newAnswer);
+
     answerEl.textContent = newAnswer;
     lastQuestion = userQuestion;
 
@@ -128,35 +133,44 @@ document.addEventListener('DOMContentLoaded', () => {
     answerEl.classList.add('show');
     shakeWrapper.classList.remove('shake');
 
-    // --- 42 Cutscene Logic ---
-    const overlay = document.getElementById('fortyTwoOverlay');
-    const overlayVideo = document.getElementById('fortyTwoVideo');
-    const bgVideo = document.querySelector('.bg-video');
-
-    if (newAnswer === "42" && overlay && overlayVideo && bgVideo) {
-      console.log("🎬 42 triggered – playing cutscene...");
+    if (newAnswer === "42") {
+      console.log("🎬 42 detected. Starting 2-second delay...");
 
       setTimeout(() => {
+        if (!overlay || !overlayVideo) {
+          console.error("❌ overlay or overlayVideo element missing.");
+          return;
+        }
+
+        console.log("🎥 Playing 42.mp4...");
         overlay.classList.remove('hidden');
         overlayVideo.currentTime = 0;
-        overlayVideo.play().catch(e => console.error("Video failed to play:", e));
-      }, 2000);
 
-      overlayVideo.onended = () => {
-        console.log("🎬 Cutscene ended – showing still background");
-        overlay.classList.add('hidden');
-        bgVideo.classList.add('hidden');
-        document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
-      };
+        overlayVideo.play().then(() => {
+          console.log("✅ Video started playing.");
+        }).catch(err => {
+          console.error("❌ Failed to play video:", err);
+        });
+
+        overlayVideo.onended = () => {
+          console.log("🎞 Cutscene finished. Switching to still background.");
+          overlay.classList.add('hidden');
+          if (bgVideo) bgVideo.classList.add('hidden');
+          document.body.style.backgroundImage = "url('images/2ndbg.jpg')";
+          document.body.style.backgroundSize = "cover";
+          document.body.style.backgroundPosition = "center";
+          document.body.style.backgroundRepeat = "no-repeat";
+        };
+      }, 2000);
     } else {
-      // Reset background for non-42 answers
+      console.log("🔁 Resetting to default background.");
       if (overlay) overlay.classList.add('hidden');
       if (bgVideo) bgVideo.classList.remove('hidden');
       document.body.style.backgroundImage = "";
     }
-
   }, 800);
 };
+
 
 
   askButton.addEventListener('click', shakeBall);
