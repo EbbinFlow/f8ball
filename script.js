@@ -35,14 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const bgVideo = document.querySelector('.bg-video');
   let lastQuestion = "";
 
-  function isYesNoQuestion(text) {
-    const firstWord = text.split(' ')[0];
-    return [
-      'is', 'are', 'can', 'will', 'should', 'do', 'does',
-      'did', 'would', 'could', 'have', 'has', 'am'
-    ].includes(firstWord);
-  }
-
   const keywordTriggers = {
     "toilet": "Ew. Why are you asking the ball about that?",
     "tacos": "The answer is always tacos.",
@@ -50,6 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
     "taxes": "Only death is certain.",
     "gay": "Yes. Everyone knows."
   };
+
+  const comboTriggers = [
+    {
+      words: ["evan", "gay"],
+      response: "Nope."
+    }
+  ];
 
   const specialQuestions = [
     "what is the meaning of life",
@@ -67,6 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
     "what is the meaning of everything"
   ];
 
+  function isYesNoQuestion(text) {
+    const firstWord = text.split(' ')[0];
+    return [
+      'is', 'are', 'can', 'will', 'should', 'do', 'does',
+      'did', 'would', 'could', 'have', 'has', 'am'
+    ].includes(firstWord);
+  }
+
+  const showAnswer = (text) => {
+    answerEl.textContent = text;
+    answerEl.classList.add('show');
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
+    window.speechSynthesis.speak(utterance);
+
+    sound.load();
+    sound.play().catch(e => console.error("Audio playback failed:", e));
+  };
+
   const shakeBall = () => {
     const shakeWrapper = document.querySelector('.shake-wrapper');
     let rawInput = questionInput.textContent || "";
@@ -83,14 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 🔒 Combo override FIRST
-    if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
-      showAnswer("Nope.");
-      lastQuestion = userQuestion;
-      return;
+    // ✅ Combo keyword override FIRST
+    for (const combo of comboTriggers) {
+      if (combo.words.every(word => userQuestion.includes(word))) {
+        showAnswer(combo.response);
+        lastQuestion = userQuestion;
+        return;
+      }
     }
 
-    // 🔑 Single keyword overrides NEXT
+    // ✅ Single keyword triggers NEXT
     for (const keyword in keywordTriggers) {
       if (userQuestion.includes(keyword)) {
         showAnswer(keywordTriggers[keyword]);
@@ -99,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 🔮 Special 42 questions NEXT
+    // ✅ Special 42 logic
     if (specialQuestions.includes(userQuestion)) {
       showAnswer("42");
       lastQuestion = userQuestion;
@@ -122,19 +143,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 💬 Not a yes/no question
     if (!isYesNoQuestion(userQuestion)) {
       showAnswer("Try a yes or no question!");
       return;
     }
 
-    // 🔁 Repeat check
     if (userQuestion === lastQuestion) {
       showAnswer("You already asked that!");
       return;
     }
 
-    // 🪄 Shake and answer
+    // Shake animation and random answer
     answerEl.classList.remove('show');
     shakeWrapper.classList.remove('shake');
     void shakeWrapper.offsetWidth;
@@ -145,23 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
       showAnswer(randomAnswer);
       lastQuestion = userQuestion;
 
-      // Reset visuals
+      // Reset background if not 42
       overlay.classList.add('hidden');
       if (bgVideo) bgVideo.classList.remove('hidden');
       document.body.style.backgroundImage = "";
     }, 800);
-  };
-
-  const showAnswer = (text) => {
-    answerEl.textContent = text;
-    answerEl.classList.add('show');
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = speechSynthesis.getVoices().find(v => v.name.toLowerCase().includes("fred")) || null;
-    window.speechSynthesis.speak(utterance);
-
-    sound.load();
-    sound.play().catch(e => console.error("Audio playback failed:", e));
   };
 
   askButton.addEventListener('click', shakeBall);
