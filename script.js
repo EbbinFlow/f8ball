@@ -82,14 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // ✅ Combo keyword override: evan + gay
+    // ✅ Combo keyword rule: evan + gay
     if (userQuestion.includes("evan") && userQuestion.includes("gay")) {
       showAnswer("Nope.");
       lastQuestion = userQuestion;
       return;
     }
 
-    // ✅ Single-word keyword triggers
+    // ✅ Combo keyword rule: curtis + gay
+    if (userQuestion.includes("curtis") && userQuestion.includes("gay")) {
+      showAnswer("Yes. Everyone knows.");
+      lastQuestion = userQuestion;
+      return;
+    }
+
+    // ✅ Single keyword triggers
     for (const keyword in keywordTriggers) {
       if (userQuestion.includes(keyword)) {
         showAnswer(keywordTriggers[keyword]);
